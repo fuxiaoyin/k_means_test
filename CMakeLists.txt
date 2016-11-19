@@ -1,0 +1,10 @@
+project(k_means_project)
+cmake_minimum_required(VERSION 2.8)
+
+SET(CMAKE_BUILD_TYPE Debug)
+#SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+#SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
+
+INCLUDE_DIRECTORIES(inc)
+AUX_SOURCE_DIRECTORY(src SRCS)
+ADD_EXECUTABLE(k_means ${SRCS})
