@@ -74,9 +74,9 @@ int Parameter::show()
     INFO("----------------config start------------------");
     INFO("INPUT_TYPE    : %s", _input_type);
     INFO("INPUT_LIST    : %s", _input_list);
-    INFO("FEAT_DIM      : %s", _feat_dim);
-    INFO("CLASS_DIM     : %s", _class_dim);
-    INFO("EPOCH         : %s", _epoch);
+    INFO("FEAT_DIM      : %d", _feat_dim);
+    INFO("CLASS_DIM     : %d", _class_dim);
+    INFO("EPOCH         : %d", _epoch);
     INFO("----------------config end--------------------");
     return RET_OK;
 }

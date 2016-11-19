@@ -29,7 +29,7 @@ private:
     int load_txt_data(char *file_name);
     int load_bin_data(char *file_name);
     //
-    int   assign_centroid();
+    float assign_centroid();
     int   calculate_new_centroid();
     float calculate_distance(
             vector<float> &data_vec, vector<float> &cent_vec);

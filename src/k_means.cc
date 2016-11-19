@@ -29,10 +29,16 @@ int K_means::init(Parameter &param)
     _cent_mat.resize(_class_dim);
     for (int ii = 0; ii < _class_dim; ii++) {
         _cent_mat[ii].resize(_feat_dim);
-        for (int jj = 0; jj < _feat_dim; jj++)
-        _cent_mat[ii][jj] = _data_mat[ii][jj];
+        for (int jj = 0; jj < _feat_dim; jj++) {
+            _cent_mat[ii][jj] = _data_mat[ii][jj];
+        }
     }
-    assign_centroid();
+    //
+    _assigned_vec.resize(_sample_num);
+    _centroid_cnt_vec.resize(_class_dim);
+    //
+    float ave_dist = assign_centroid();
+    INFO("init average distance = %f\n", ave_dist);
 }
 
 int K_means::load_data_list(char *file_name, char *type)
@@ -78,14 +84,14 @@ int K_means::load_txt_data(char *file_name)
     while (!feof(fp)) {
         memset(content, '\0', 10240);
         fgets(content, 10240, fp);
-        char *temp = strtok(content, " \r\n");
+        char *temp = strtok(content, " \t\r\n");
         if (temp == NULL) {
             continue;
         }
         int idx = 0;
         while (temp) {
             data_vec[idx++] = atof(temp);
-            temp = strtok(NULL, " \r\n");
+            temp = strtok(NULL, " \t\r\n");
             if (idx == _feat_dim && temp != NULL) {
                 ERROR("too many features!\n");
                 return RET_OK;
@@ -139,7 +145,8 @@ int K_means::do_cluster()
 {
     for (int ii = 0; ii < _epoch; ii++) {
         calculate_new_centroid();
-        assign_centroid();
+        float ave_dist = assign_centroid();
+        INFO("epoch%d average distance = %f\n", ii, ave_dist);
     }
     return RET_OK;
 }
@@ -154,11 +161,14 @@ float K_means::calculate_distance(
     return distance;
 }
 
-int K_means::assign_centroid()
+float K_means::assign_centroid()
 {
-    float min_distance = FLT_MAX_VALUE;
-    int   choose_id    = INT_MAX_VALUE;
+    memset(&_centroid_cnt_vec[0], 0, sizeof(int) * _class_dim);
+    //
+    float ave_distance = 0.0f;
     for (int ii = 0; ii < _sample_num; ii++) {
+        float min_distance = FLT_MAX_VALUE;
+        int   choose_id    = INT_MAX_VALUE;
         for (int jj = 0; jj < _class_dim; jj++) {
             float distance_to_centroid = calculate_distance(
                     _data_mat[ii], _cent_mat[jj]);
@@ -169,8 +179,10 @@ int K_means::assign_centroid()
         }
         _assigned_vec[ii] = choose_id;
         _centroid_cnt_vec[choose_id]++;
+        //
+        ave_distance += min_distance;
     }
-    return RET_OK;
+    return ave_distance / (float)_sample_num;
 }
 
 int K_means::calculate_new_centroid()
