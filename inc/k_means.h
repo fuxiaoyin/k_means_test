@@ -23,8 +23,9 @@ public:
     
     int init(Parameter &param);
     int do_cluster();
-    int write(char *out_file);
+    int write();
 private:
+    int load_data_list(char *file_name, char *type);
     int load_txt_data(char *file_name);
     int load_bin_data(char *file_name);
     //
@@ -43,6 +44,9 @@ public:
     //
     vector<int> _assigned_vec;     // 记录样本聚到哪个类中
     vector<int> _centroid_cnt_vec; // 记录每个类的样本数目
+
+    vector<string> _name_vec;
+    vector<int>    _sample_vec;
 };
 
 ANS_END

@@ -24,8 +24,7 @@ private:
     int load(char *config_file);
 public:
     char _input_type[MAX_PATH_LEN];
-    char _input_file[MAX_PATH_LEN];
-    char _output_file[MAX_PATH_LEN];
+    char _input_list[MAX_PATH_LEN];
     int  _feat_dim;
     int  _class_dim;
     int  _epoch;

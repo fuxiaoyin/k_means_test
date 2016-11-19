@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     K_means k_means;
     k_means.init(param);
     k_means.do_cluster();
-    k_means.write(param._output_file);
+    k_means.write();
 
     return RET_OK;
 }

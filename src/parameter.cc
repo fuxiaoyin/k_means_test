@@ -30,23 +30,13 @@ int Parameter::load_conf(char *config_file)
         return RET_ERROR; 
     }
     
-    iter = _map_vec.find("INPUT_FILE");
+    iter = _map_vec.find("INPUT_LIST");
     if (iter != _map_vec.end()) {
-        strcpy(_input_file, iter->second.c_str());
-        _input_file[MAX_PATH_LEN-1] = '\0';
+        strcpy(_input_list, iter->second.c_str());
+        _input_list[MAX_PATH_LEN-1] = '\0';
     }
     else {
-        ERROR("Cannot find input file!\n");
-        return RET_ERROR; 
-    }
-    
-    iter = _map_vec.find("OUTPUT_FILE");
-    if (iter != _map_vec.end()) {
-        strcpy(_output_file, iter->second.c_str());
-        _output_file[MAX_PATH_LEN-1] = '\0';
-    }
-    else {
-        ERROR("Cannot find output file!\n");
+        ERROR("Cannot find input list!\n");
         return RET_ERROR; 
     }
     
@@ -83,8 +73,7 @@ int Parameter::show()
 {
     INFO("----------------config start------------------");
     INFO("INPUT_TYPE    : %s", _input_type);
-    INFO("INPUT_FILE    : %s", _input_file);
-    INFO("OUTPUT_FILE   : %s", _output_file);
+    INFO("INPUT_LIST    : %s", _input_list);
     INFO("FEAT_DIM      : %s", _feat_dim);
     INFO("CLASS_DIM     : %s", _class_dim);
     INFO("EPOCH         : %s", _epoch);

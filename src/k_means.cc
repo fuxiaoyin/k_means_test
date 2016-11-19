@@ -24,16 +24,7 @@ int K_means::init(Parameter &param)
     _class_dim = param._class_dim;
     _epoch     = param._epoch;
     //
-    if (strcmp(param._input_type, "txt") == 0) {
-        _sample_num = load_txt_data(param._input_file);
-    }
-    else if (strcmp(param._input_type, "bin") == 0) {
-        _sample_num = load_bin_data(param._input_file);
-    }
-    else {
-        ERROR("Wrong input type : %s\n", param._input_type);
-        return RET_ERROR;
-    }
+    _sample_num = load_data_list(param._input_list, param._input_type);
     // choose initial centroids
     _cent_mat.resize(_class_dim);
     for (int ii = 0; ii < _class_dim; ii++) {
@@ -42,6 +33,36 @@ int K_means::init(Parameter &param)
         _cent_mat[ii][jj] = _data_mat[ii][jj];
     }
     assign_centroid();
+}
+
+int K_means::load_data_list(char *file_name, char *type)
+{
+    FILE *fp = fopen(file_name, "rt");
+    if (fp == NULL) {
+        ERROR("Cannot open file %s to read!\n", file_name);
+        return RET_ERROR;
+    }
+    int sample_num = 0;
+    char content[1024];
+    while (!feof(fp)) {
+        memset(content, '\0', 1024);
+        fgets(content, 1024, fp);
+        char *temp = strtok(content, " \r\n");
+        if (temp == NULL) {
+            continue;
+        }
+        if (strcmp(type, "txt") == 0) {
+            sample_num += load_txt_data(temp);
+        }
+        else {
+            sample_num += load_bin_data(temp);
+        }
+        //
+        _name_vec.push_back(temp);
+        _sample_vec.push_back(sample_num);
+    }
+    fclose(fp);
+    return sample_num;
 }
 
 int K_means::load_txt_data(char *file_name)
@@ -174,16 +195,22 @@ int K_means::calculate_new_centroid()
     }
 }
 
-int K_means::write(char *file_name)
+int K_means::write()
 {
-    FILE *fp = fopen(file_name, "wt");
-    if (fp == NULL) {
-        ERROR("Cannot open file %s to write!\n", file_name);
-        return RET_ERROR;
+    char out_file_name[1024];
+    for (int ii = 0; ii < _sample_vec.size(); ii++) {
+        sprintf(out_file_name, "%s.class", _name_vec[ii].c_str());
+        FILE *fp = fopen(out_file_name, "wt");
+        if (fp == NULL) {
+            ERROR("Cannot open file %s to write!\n", out_file_name);
+            return RET_ERROR;
+        }
+        int st = (ii == 0) ? 0 : _sample_vec[ii - 1];
+        int ed = _sample_vec[ii];
+        for (int jj = st; jj < ed; jj++) {
+            fprintf(fp, "%d\n", _assigned_vec[jj]);
+        }
+        fclose(fp);
     }
-    for (int ii = 0; ii < _sample_num; ii++) {
-        fprintf(fp, "%d\n", _assigned_vec[ii]);
-    }
-    fclose(fp);
     return RET_OK;
 }
