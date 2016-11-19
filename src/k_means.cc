@@ -80,6 +80,7 @@ int K_means::load_txt_data(char *file_name)
     }
     vector<float> data_vec;
     data_vec.resize(_feat_dim);
+    int sample_num = 0;
     char content[10240];
     while (!feof(fp)) {
         memset(content, '\0', 10240);
@@ -102,10 +103,11 @@ int K_means::load_txt_data(char *file_name)
             return RET_OK;
         }
         _data_mat.push_back(data_vec);
+        sample_num++;
     }
     fclose(fp);
     //
-    int sample_num = _data_mat.size();
+    //int sample_num = _data_mat.size();
     //
     INFO("Load samples successfully! sample_num = %d\n", sample_num);
     return sample_num;
