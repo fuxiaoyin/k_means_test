@@ -1,25 +1,16 @@
-/*
-* k_means.h
-* Author: fuxiaoyin
-* Created on: 2016-10-22
-* Copyright (c) Ainirobot.com, Inc. All Rights Reserved
-*/
-
-#ifndef K_MEANS_H
-#define K_MEANS_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "commons.h"
 #include "parameter.h"
+#include "cuMatrix.h"
 
-ANS_BEG
-
-class K_means
+class cukmeans
 {
 public:
-    K_means();
-    ~K_means();
+    cukmeans();
+    ~cukmeans();
     
     int init(Parameter &param);
     int do_cluster();
@@ -38,16 +29,17 @@ public:
     int _sample_num;
     int _class_dim;
     int _epoch;
-    vector< vector<float> > _data_mat;
-    vector< vector<float> > _cent_mat;
-    //
-    vector<int> _assigned_vec;     // 记录样本聚到哪个类中
-    vector<int> _centroid_cnt_vec; // 记录每个类的样本数目
 
-    vector<string> _name_vec;
+
+    cuMatrix<float>* _data_mat;
+    cuMatrix<float>* _cent_mat;
+
+    cuMatrix<int>* _assigned_vec; // 记录样本聚到哪个类中
+
+    cuMatrix<float>* _min_distance; // 记录每个点到最近的中心的距离
+    cuMatrix<float>* _distance;// 记录每个点到每个中心的距离
+    cuMatrix<float>* _ave_distance; // 平均距离
+
+    vector<string> _name_vec;//多个文件读入相关的变量
     vector<int>    _sample_vec;
 };
-
-ANS_END
-
-#endif
